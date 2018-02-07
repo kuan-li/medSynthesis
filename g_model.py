@@ -59,6 +59,7 @@ class MR2CT(object):
 
     def build_model(self):
 	   with tf.device('/gpu:0'):
+            print 'In build_model: '
             self.inputMR=tf.placeholder(tf.float32, shape=[None, self.height_MR, self.width_MR, 5])#5 chans input
             self.CT_GT=tf.placeholder(tf.float32, shape=[None, self.height_CT, self.width_CT, 1])
             batch_size_tf = tf.shape(self.inputMR)[0]  #variable batchsize so we can test here
@@ -92,6 +93,7 @@ class MR2CT(object):
 
 
     def generator(self,inputMR,batch_size_tf, reuse = False):
+        print 'In generator: '
         with tf.variable_scope('generator') as scope:
             if (reuse):
                 tf.get_variable_scope().reuse_variables()
@@ -115,6 +117,7 @@ class MR2CT(object):
 
 
     def discriminator(self, inputCT, reuse=False):
+        print 'In discriminator: '
         with tf.variable_scope('discriminator') as scope:
             if reuse:
                 tf.get_variable_scope().reuse_variables()
@@ -138,7 +141,9 @@ class MR2CT(object):
 
 
     def train(self, config):
-    	path_test='/home/dongnie/warehouse/prostate/ganData64to24Test'
+        print 'In train: '
+    	#path_test='/home/dongnie/warehouse/prostate/ganData64to24Test'
+        path_test = '/home/aryan/Downloads/data/ADNI/1.5T3TData/S3'
         print 'global_step ', self.global_step.name
         print 'lr_step ',self.lr_step
         print 'trainable vars '
@@ -162,6 +167,7 @@ class MR2CT(object):
 
         for it in range(start,config.iterations):
 
+            print 'it: ',it
             X,y=self.data_generator.next()
 
 
@@ -209,18 +215,20 @@ class MR2CT(object):
             
             if it%config.test_every==0 and it!=0:#==0:#test one subject                
 
-                mr_test_itk=sitk.ReadImage(os.path.join(path_test,'prostate_1to1_MRI.nii'))
-                ct_test_itk=sitk.ReadImage(os.path.join(path_test,'prostate_1to1_CT.nii'))
+                # mr_test_itk=sitk.ReadImage(os.path.join(path_test,'prostate_1to1_MRI.nii'))
+                # ct_test_itk=sitk.ReadImage(os.path.join(path_test,'prostate_1to1_CT.nii'))
+                mr_test_itk=sitk.ReadImage(os.path.join(path_test,'re_1.5T.nii'))
+                ct_test_itk=sitk.ReadImage(os.path.join(path_test,'3T.nii'))
                 mrnp=sitk.GetArrayFromImage(mr_test_itk)
                 #mu=np.mean(mrnp)
                 #mrnp=(mrnp-mu)/(np.max(mrnp)-np.min(mrnp))
                 ctnp=sitk.GetArrayFromImage(ct_test_itk)
-                print mrnp.dtype
-                print ctnp.dtype
+                print 'mrnp.datype: ', mrnp.dtype
+                print 'ctnp.dtype: ', ctnp.dtype
                 ct_estimated=self.test_1_subject(mrnp,ctnp,[64,64,5],[48,48,1],[2,5,5])
                 psnrval=psnr(ct_estimated,ctnp)
-                print ct_estimated.dtype
-                print ctnp.dtype
+                print 'ct_estimated.dtype: ', ct_estimated.dtype
+                print 'ctnp.dtype: ', ctnp.dtype
                 print 'psnr= ',psnrval
                 volout=sitk.GetImageFromArray(ct_estimated)
                 sitk.WriteImage(volout,'ct_estimated_{}'.format(it)+'.nii.gz')
@@ -252,6 +260,7 @@ class MR2CT(object):
         """
             receives an MR image and returns an estimated CT image of the same size
         """
+        print 'In test_1_subject: '
         matFA=MR_image
         matSeg=CT_GT
         dFA=MR_patch_sz

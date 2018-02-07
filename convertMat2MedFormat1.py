@@ -95,23 +95,25 @@ def cropCubic(matFA,matSeg,fileID,d,step,rate):
   
     trainSeg=trainSeg[0:cubicCnt,:,:,:,:]
 
-    with h5py.File('./train64to48_%s.h5'%fileID,'w') as f:
-        f['data3T']=trainFA
-        f['data7T']=trainSeg
+    with h5py.File('/home/aryan/Downloads/data/ADNI/1.5T3TData/train64to48_%s.h5'%fileID,'w') as f:
+        f['data1.5T']=trainFA
+        f['data3T']=trainSeg
      
-    with open('./train64to48_list.txt','a') as f:
-        f.write('./train64to48_%s.h5\n'%fileID)
+    with open('/home/aryan/Downloads/data/ADNI/1.5T3TData/train64to48_list.txt','a') as f:
+        f.write('./home/aryan/Downloads/data/ADNI/1.5T3TData/train64to48_%s.h5\n'%fileID)
     return cubicCnt
     	
 def main():
-    path='/shenlab/lab_stor3/dongnie/3T7T-Data/'
-    saveto='/shenlab/lab_stor3/dongnie/3T7T-Data/'
-   
-    ids=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    #path='/shenlab/lab_stor3/dongnie/3T7T-Data/'
+    #saveto='/shenlab/lab_stor3/dongnie/3T7T-Data/'
+    path = '/home/aryan/Downloads/data/ADNI/1.5T3TData'
+    
+
+    ids=[1,2,3]
     for ind in ids:
-        datafilename='S%d/3t.hdr'%ind #provide a sample name of your filename of data here
+        datafilename='S%d/re_1.5T.nii'%ind #provide a sample name of your filename of data here
         datafn=os.path.join(path,datafilename)
-        labelfilename='S%d/7t.hdr'%ind  # provide a sample name of your filename of ground truth here
+        labelfilename='S%d/3T.nii'%ind  # provide a sample name of your filename of ground truth here
         labelfn=os.path.join(path,labelfilename)
         imgOrg=sitk.ReadImage(datafn)
         mrimg=sitk.GetArrayFromImage(imgOrg)
@@ -129,17 +131,20 @@ def main():
         #you can do what you want here for for your label img
         #imgOrg=sitk.ReadImage(gtfn)
         #gtMat=sitk.GetArrayFromImage(imgOrg)
-        prefn='s%d_3t.nii.gz'%ind
-        preVol=sitk.GetImageFromArray(mrimg)
-        sitk.WriteImage(preVol,prefn)
-        outfn='s%d_7t.nii.gz'%ind
-        preVol=sitk.GetImageFromArray(labelimg)
-        sitk.WriteImage(preVol,outfn)
+        
+        # prefn='s%d_3t.nii.gz'%ind
+        # preVol=sitk.GetImageFromArray(mrimg)
+        # sitk.WriteImage(preVol,prefn)
+        # outfn='s%d_7t.nii.gz'%ind
+        # preVol=sitk.GetImageFromArray(labelimg)
+        # sitk.WriteImage(preVol,outfn)
  
         fileID='%d'%ind
         rate=1
-        #cubicCnt=cropCubic(mrimg,labelimg,fileID,dFA,step,rate)
-        #print '# of patches is ', cubicCnt
+        print 'imgOrg: ', imgOrg.GetSize()
+        print 'labelOrg: ', labelOrg.GetSize()
+        cubicCnt=cropCubic(mrimg,labelimg,fileID,dFA,step,rate)
+        print '# of patches is ', cubicCnt
     
 if __name__ == '__main__':     
     main()

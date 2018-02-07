@@ -61,24 +61,24 @@ def dice(im1, im2,organid):
 
 def Generator_2D_slices(path_patients,batchsize):
     #path_patients='/home/dongnie/warehouse/CT_patients/test_set/'
-    print path_patients
+    print 'from gen_2d: ', path_patients
     patients = os.listdir(path_patients)#every file  is a hdf5 patient
     while True:
         
         for idx,namepatient in enumerate(patients):
             print namepatient            
             f=h5py.File(os.path.join(path_patients,namepatient))
-            dataMRptr=f['dataMR']
+            dataMRptr=f['data1.5T']
             dataMR=dataMRptr.value
             
-            dataCTptr=f['dataCT']
+            dataCTptr=f['data3T']
             dataCT=dataCTptr.value
 
             dataMR=np.squeeze(dataMR)
             dataCT=np.squeeze(dataCT)
 
-            #print 'mr shape h5 ',dataMR.shape#B,H,W,C
-            #print 'ct shape h5 ',dataCT.shape#B,H,W
+            print '1.5T shape h5 ',dataMR.shape#B,H,W,C
+            print '3T shape h5 ',dataCT.shape#B,H,W
             
             shapedata=dataMR.shape
             #Shuffle data
@@ -122,11 +122,11 @@ def Generator_3D_patches(path_patients,batchsize):
         for idx,namepatient in enumerate(patients):
             print namepatient            
             f=h5py.File(os.path.join(path_patients,namepatient))
-            dataMRptr=f['dataMR']
+            dataMRptr=f['data1.5T']
             dataMR=dataMRptr.value
             #dataMR=np.squeeze(dataMR)
             
-            dataCTptr=f['dataCT']
+            dataCTptr=f['data3T']
             dataCT=dataCTptr.value
             #dataCT=np.squeeze(dataCT)
 
@@ -183,10 +183,10 @@ def get_test_slices(path_test):
     patients = os.listdir(path_test)#every file  is a hdf5 patient
     idx=np.random.choice(len(patients), 1, replace=False)
     f=h5py.File(os.path.join(path_test,patients[idx]))
-    dataMRptr=f['dataMR']
+    dataMRptr=f['data1.5T']
     dataMR=dataMRptr.value
             
-    dataCTptr=f['dataCT']
+    dataCTptr=f['data3T']
     dataCT=dataCTptr.value
     dataCT=np.expand_dims(dataCT,3)
     return [dataMR,dataCT]

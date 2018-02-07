@@ -6,11 +6,11 @@ from g_model import MR2CT
 pp = pprint.PrettyPrinter()
 
 flags = tf.app.flags
-flags.DEFINE_integer("iterations", 500000, "Epoch to train [50000]")
+flags.DEFINE_integer("iterations", 100, "Epoch to train [50000]")
 flags.DEFINE_float("learning_rate", 1e-6, "Learning rate of for SGD [1e-6]")
 flags.DEFINE_integer("batch_size", 10, "The size of batch images [10]")
-flags.DEFINE_integer("show_every", 100, "The size of batch images [100]")
-flags.DEFINE_integer("save_every", 2000, "The size of batch images [2000]")
+flags.DEFINE_integer("show_every", 5, "The size of batch images [100]")
+flags.DEFINE_integer("save_every", 5, "The size of batch images [2000]")
 flags.DEFINE_integer("test_every", 10, "test every [10000] iterations the subject")
 flags.DEFINE_integer("l_num", 2, "The l norm value, either 1 or 2 [2]")
 flags.DEFINE_integer("lr_step", 30000, "The step to decrease lr [lr_step]")
@@ -24,8 +24,8 @@ flags.DEFINE_float("lam_gdl", 1.0, "weight gdl loss [1.0] ")
 flags.DEFINE_float("lam_adv", 0.05, "weight adv loss [0.05] ")
 flags.DEFINE_float("alpha", 2, "alpha for the gdl loss [2] ")
 flags.DEFINE_string("checkpoint_dir", "checkpoint", "Directory name to save the checkpoints [checkpoint]")
-flags.DEFINE_string("path_patients_h5", "/raid/dongnie/brainData",
-	 "Directory where the h5 files are located ['/raid/dongnie/brainData']")
+flags.DEFINE_string("path_patients_h5", "/home/aryan/Downloads/data/ADNI/1.5T3TData/train",
+	 "Directory where the h5 files are located ['/home/aryan/Downloads/data/ADNI/1.5T3TData/train']")
 FLAGS = flags.FLAGS
 
 '''
